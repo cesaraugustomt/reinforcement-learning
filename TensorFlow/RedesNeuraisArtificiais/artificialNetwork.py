@@ -36,9 +36,16 @@ model = tf.keras.models.Sequential() #sequência de camadas
 # Adicionando uma camada densa de entrada (fully-connected)
 model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(784, )))
 
+
 # Adicionando a camada (Dropout) que prever o overffting
 model.add(tf.keras.layers.Dropout(0.2)) #0.2 vamos zerar 20% dos neurônios dessa camada
 
+#definindo mais camadas ocultas
+model.add(tf.keras.layers.Dense(units=128, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(units=128, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(units=128, activation='relu'))
 # Adicionando a camada de saída (na bd temos 10 classes)
 model.add(tf.keras.layers.Dense(units=10, activation="softmax"))
 
@@ -49,11 +56,16 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 #print(model.summary())
 
 # ETAPA 6 Treninando o modelo
-model.fit(x_train, y_train, epochs=5)
+model.fit(x_train, y_train, epochs=20)
 
 # ETAPA 7 Avaliação do modelo e previsão
 test_loss, test_accuracy = model.evaluate(x_test, y_test)
 print("Test accuracy: {}".format(test_accuracy))
 print("Test loss ", test_loss)
 
+# ETAPA 8 Salvando o modelo
+model_json = model.to_json()
+with open("fashion_model_json", "w") as json_file:
+    json_file.write(model_json)
 
+model.save_weights("fashion_model.weights.h5")
