@@ -26,16 +26,16 @@ model = tf.keras.models.Sequential()
 # adicionando primeira camada de convolução / print o shape para saber o input_shape
 model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, padding="same", activation="relu", input_shape=[32, 32, 3]))
 model.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, padding="same", activation="relu"))
-# Adicionando a camada de (max Pooling)
 model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding='valid'))
 model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
 model.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
 model.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2, padding='valid'))
-# Adicionando a camada de (flattening) para transformar em vetor
+# adicionando Flatten
 model.add(tf.keras.layers.Flatten())
-# Adicionando a primeira camada densa (fully-connected)
 model.add(tf.keras.layers.Dense(units=128, activation='relu'))
-# Adicionando a camada de saída / units é a quantidade de classes
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(units=128, activation='relu'))
+model.add(tf.keras.layers.Dropout(0.2))
 model.add(tf.keras.layers.Dense(units=10, activation='softmax'))
 print(model.summary())
 
@@ -46,7 +46,7 @@ print(model.summary())
 model.compile(loss='sparse_categorical_crossentropy', optimizer="Adam", metrics=["sparse_categorical_accuracy"])
 
 # ETAPA 5 Treinando o modelo
-model.fit(x_train, y_train, epochs=2)
+model.fit(x_train, y_train, epochs=15)
 
 # ETAPA 6 Avaliando o modelo
 test_loss, test_accuracy = model.evaluate(x_test, y_test)
