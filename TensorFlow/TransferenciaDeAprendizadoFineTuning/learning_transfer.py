@@ -54,4 +54,28 @@ valid_loss, valid_accuracy = model.evaluate(valid_generator)
 print("accuracy:", valid_accuracy)
 print("loss:", valid_loss)
 
+# Fine tuning
+# NÃO USE Fine Tuning em toda a rede neural, pois somente em algumas camadas já é suficiente. A ideia é adotar parte
+# especifica da rede neural para nosso problema específico
+# Inicie o Fine Tuning DEPOIS que você finalizou a transferência de aprendizagem. Se você tentar o Fine Tuning imediatamente,
+# os gradientes serão muito diferentes entre o cabeçalho personalizado e a algumas camadas descongeladas do modelo base
 
+# Descongelando algumas camadas do topo do modelo base
+base_model.trainable = True
+print(len(base_model.layers)) #155
+fine_tuning_at = 100
+
+for layer in base_model.layers[:fine_tuning_at]:
+    layer.trainable = False
+
+# Compilando o modelo para fine tuning
+model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.0001),
+              loss="binary_crossentropy", metrics=["accuracy"])
+
+# Aplicando o Fine Tuning (treinar por mais épocas)
+model.fit(train_generator, epochs=4, validation_data=valid_generator)
+
+# Avalição do modelo com fine tuning
+valid_loss, valid_accuracy = model.evaluate(valid_generator)
+print("accuracy fine tuning:", valid_accuracy)
+print("loss fine tuning:", valid_loss)
